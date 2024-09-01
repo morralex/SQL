@@ -1,0 +1,58 @@
+SELECT * FROM CityBikeLanes LIMIT 10;
+-- SELECT * FROM CityBikeLanes WHERE street='Walnut';
+
+/*
+Your boss wants a list of all the bike lanes that have an average safety rating of 4.0 or higher.
+She also wants to see the average safety rating for each of those bike lanes,
+and a label that says "Safe Lane".
+*/
+
+WITH bikeLaneSafety AS (
+SELECT cbl.street, 
+AVG(cbl.safetyrating) AS average_rating
+FROM CityBikeLanes cbl
+GROUP BY  cbl.street
+)
+SELECT street,
+    average_rating,
+    'Safe Lane' AS label
+FROM bikeLaneSafety
+WHERE average_rating>=4.0;
+
+SELECT street, safetyrating,
+AVG(safetyrating) as "Average_safety_rating"
+FROM CityBikeLanes
+Group by street;
+
+SELECT street, safetyrating, AVG(safetyrating)
+FROM CityBikeLanes
+WHERE street='2nd'
+GROUP BY street, safetyrating;
+
+SELECT street, safetyrating,
+AVG(safetyrating) OVER (PARTITION BY street) as "Average_safety_rating"
+FROM CityBikeLanes
+WHERE street='2nd';
+
+/*
+
+List of all the bike lanes, both safety ratings for each lane, 
+the average safety rating for each lane, 
+and a label with the recommendation as "Remove", "Leave As-Is", or "Improvements Needed".
+
+Use AVG(safetyrating) with a window function.
+Use OVER to designate the window function.
+Use PARTITION BY in the window function to partition the results by street.
+Use a CASE statement to create labels for the recommendations for each bike lane.    
+
+*/
+
+SELECT street, safetyrating,
+AVG(safetyrating) OVER (PARTITION BY street) AS "Average_safety_rating",
+    CASE
+        WHEN AVG(safetyrating) OVER (PARTITION BY street) >=4 THEN "Leave As-Is"
+        WHEN AVG(safetyrating) OVER (PARTITION BY street) <=2.5 THEN "Remove"
+        ELSE "Improvements Needed"
+    END AS "Recommendation"
+FROM CityBikeLanes
+ORDER BY AVERAGE_SAFETY_RATING;
