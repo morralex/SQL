@@ -1,3 +1,8 @@
+/*
+We were provided with a zip file containing a dataset and a set of questions to be answered using SQL queries.
+Below are the questions and corresponding SQL queries used to derive the answers.
+*/
+
 -- SELECT * FROM chinook.customers;
 -- Show Customers (their full names, customer ID, and country) who are not in the US. (Hint: != or <> can be used to say "is not equal to").
 SELECT Distinct CustomerId, FirstName, LastName, Country
